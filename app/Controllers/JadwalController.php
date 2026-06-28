@@ -57,7 +57,7 @@ class JadwalController extends BaseController
         $rules = [
             'nama_kelas'  => 'required|min_length[3]',
             'id_dosen'    => 'required|integer',
-            'tanggal'        => 'required',
+            'hari'        => 'required',
             'jam_mulai'   => 'required',
             'jam_selesai' => 'required',
         ];
@@ -71,7 +71,7 @@ class JadwalController extends BaseController
         $this->kelasModel->insert([
             'nama_kelas'  => $this->request->getPost('nama_kelas'),
             'id_dosen'    => $this->request->getPost('id_dosen'),
-            'tanggal'     => $this->request->getPost('tanggal'),
+            'hari'        => $this->request->getPost('hari'),
             'jam_mulai'   => $this->request->getPost('jam_mulai'),
             'jam_selesai' => $this->request->getPost('jam_selesai'),
             'created_at'  => date('Y-m-d H:i:s'),
@@ -107,7 +107,7 @@ class JadwalController extends BaseController
         $rules = [
             'nama_kelas'  => 'required|min_length[3]',
             'id_dosen'    => 'required|integer',
-            'tanggal'        => 'required',
+            'hari'        => 'required',
             'jam_mulai'   => 'required',
             'jam_selesai' => 'required',
         ];
@@ -121,7 +121,7 @@ class JadwalController extends BaseController
         $this->kelasModel->update($id, [
             'nama_kelas'  => $this->request->getPost('nama_kelas'),
             'id_dosen'    => $this->request->getPost('id_dosen'),
-            'tanggal'        => $this->request->getPost('tanggal'),
+            'hari'        => $this->request->getPost('hari'),
             'jam_mulai'   => $this->request->getPost('jam_mulai'),
             'jam_selesai' => $this->request->getPost('jam_selesai'),
         ]);
