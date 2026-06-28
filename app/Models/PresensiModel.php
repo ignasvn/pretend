@@ -41,4 +41,37 @@ class PresensiModel extends Model
                     ->where('tabel_presensi.tanggal', $tanggal)
                     ->findAll();
     }
+
+    // Rekap per mahasiswa per kelas dalam rentang tanggal
+    public function getRekapByKelas(int $id_kelas, string $dari, string $sampai)
+    {
+        return $this->select('
+                    tabel_users.nama,
+                    tabel_users.username,
+                    SUM(CASE WHEN status = "Hadir" THEN 1 ELSE 0 END) as total_hadir,
+                    SUM(CASE WHEN status = "Sakit" THEN 1 ELSE 0 END) as total_sakit,
+                    SUM(CASE WHEN status = "Izin"  THEN 1 ELSE 0 END) as total_izin,
+                    SUM(CASE WHEN status = "Alpha" THEN 1 ELSE 0 END) as total_alpha,
+                    COUNT(*) as total_pertemuan
+                ')
+                ->join('tabel_users', 'tabel_users.id_user = tabel_presensi.id_user')
+                ->where('tabel_presensi.id_kelas', $id_kelas)
+                ->where('tanggal >=', $dari)
+                ->where('tanggal <=', $sampai)
+                ->groupBy('tabel_presensi.id_user')
+                ->findAll();
+    }
+
+    // Rekap detail per mahasiswa (semua presensinya)
+    public function getDetailMahasiswa(int $id_user, int $id_kelas, string $dari, string $sampai)
+    {
+        return $this->select('tabel_presensi.*, tabel_kelas.nama_kelas')
+                    ->join('tabel_kelas', 'tabel_kelas.id_kelas = tabel_presensi.id_kelas')
+                    ->where('tabel_presensi.id_user', $id_user)
+                    ->where('tabel_presensi.id_kelas', $id_kelas)
+                    ->where('tanggal >=', $dari)
+                    ->where('tanggal <=', $sampai)
+                    ->orderBy('tanggal', 'ASC')
+                    ->findAll();
+    }
 }
