@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ sidebarOpen: true, dark: false }" :class="{ 'dark': dark }">
+<html lang="id" x-data="{ 
+    dark: localStorage.getItem('theme') === 'dark',
+    init() {
+        this.$watch('dark', val => localStorage.setItem('theme', val ? 'dark' : 'light'))
+    }
+}" 
+:class="{ 'dark': dark }"
+@toggle-dark.window="dark = !dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

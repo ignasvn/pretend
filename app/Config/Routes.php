@@ -38,3 +38,8 @@ $routes->post('/presensi/koreksi/(:num)', 'PresensiController::koreksi/$1', ['fi
 // Laporan
 $routes->get('/laporan', 'LaporanController::index', ['filter' => 'auth']);
 $routes->get('/laporan/export-csv', 'LaporanController::exportCsv', ['filter' => 'auth']);
+
+// Profile & Settings
+$routes->get('/profile', 'ProfileController::index', ['filter' => 'auth']);
+$routes->get('/profile/edit', 'ProfileController::edit', ['filter' => 'auth']);
+$routes->post('/profile/edit', 'ProfileController::update', ['filter' => 'auth']);
