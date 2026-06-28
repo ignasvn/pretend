@@ -14,6 +14,13 @@ yarn-debug.log*
 yarn-error.log*
 /.phpunit.result.cache
 
+writable/logs/*.log
+writable/debugbar/
+writable/logs/
+writable/session/
+writable/cache/
+writable/uploads/
+
 # --- Penyimpanan Internal Laravel (Storage) ---
 /storage/*.key
 /storage/framework/cache/data/*
@@ -29,3 +36,6 @@ Thumbs.db
 Homestead.json
 Homestead.yaml
 .vessel/
+
+# Instruksi dasar Agent
+instructions.md

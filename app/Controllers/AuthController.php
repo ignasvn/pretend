@@ -2,86 +2,56 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\RESTful\ResourceController;
+use App\Models\UserModel;
 
-class AuthController extends ResourceController
+class AuthController extends BaseController
 {
-    /**
-     * Return an array of resource objects, themselves in array format.
-     *
-     * @return ResponseInterface
-     */
+    // GET /login -> tampilkan form
     public function index()
     {
+        if(session()->get('isLoggedIn')){
+            return redirect()->to('/dashboard');
+        }
         return view('auth/index');
     }
 
-    /**
-     * Return the properties of a resource object.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
-    public function show($id = null)
+    // POST /login -> proses form
+    public function login()
     {
-        //
+        $input = $this->request->getPost('username'); // bisa username atau email
+        $password = $this->request->getPost('password');
+
+        $model = new UserModel();
+        $user = $model->findByUsernameOrEmail($input);
+
+        // Cek 1: User ketemu di database?
+        if(!$user){
+            return redirect()->back()->with('error', 'Username atau email tidak ditemukan.');
+        }
+        
+        // Cek 2: Password cocok? (bandingkan input dengan hash di DB)
+        if(!password_verify($password, $user['password'])){
+            return redirect()->back()->with('error', 'Password salah.');
+        }
+
+        // SUKSES -> simpan data ke Session
+        $sessionData = [
+            'id_user' => $user['id_user'],
+            'nama' => $user['nama'],
+            'role' => $user['role'],
+            'isLoggedIn' => true,
+        ];
+        session()->set($sessionData);
+
+        // Redirect berdasarkan Role
+        return redirect()->to('/dashboard');
     }
 
-    /**
-     * Return a new resource object, with default properties.
-     *
-     * @return ResponseInterface
-     */
-    public function new()
+    // GET /logout -> hapus session
+    public function logout()
     {
-        //
+        session()->destroy();
+        return redirect()->to('/index');
     }
 
-    /**
-     * Create a new resource object, from "posted" parameters.
-     *
-     * @return ResponseInterface
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Return the editable properties of a resource object.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
-    public function edit($id = null)
-    {
-        //
-    }
-
-    /**
-     * Add or update a model resource, from "posted" properties.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
-    public function update($id = null)
-    {
-        //
-    }
-
-    /**
-     * Delete the designated resource object from the model.
-     *
-     * @param int|string|null $id
-     *
-     * @return ResponseInterface
-     */
-    public function delete($id = null)
-    {
-        //
-    }
 }
