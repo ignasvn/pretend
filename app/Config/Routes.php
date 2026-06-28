@@ -29,3 +29,8 @@ $routes->post('/jadwal/create', 'JadwalController::store', ['filter' => 'auth'])
 $routes->get('/jadwal/edit/(:num)', 'JadwalController::edit/$1', ['filter' => 'auth']);
 $routes->post('/jadwal/edit/(:num)', 'JadwalController::update/$1', ['filter' => 'auth']);
 $routes->get('/jadwal/delete/(:num)', 'JadwalController::delete/$1', ['filter' => 'auth']);
+
+// Presensi
+$routes->get('/presensi', 'PresensiController::index', ['filter' => 'auth']);
+$routes->post('/presensi/store', 'PresensiController::store', ['filter' => 'auth']);
+$routes->post('/presensi/koreksi/(:num)', 'PresensiController::koreksi/$1', ['filter' => 'auth']);
