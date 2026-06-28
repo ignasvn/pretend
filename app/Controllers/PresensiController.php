@@ -4,11 +4,11 @@ namespace App\Controllers;
 
 use App\Models\PresensiModel;
 use App\Models\KelasModel;
-use App\Models\UserModel;
 
 class PresensiController extends BaseController
 {
     protected $presensiModel;
+    protected $sesiModel;
     protected $kelasModel;
 
     public function __construct()
@@ -19,78 +19,62 @@ class PresensiController extends BaseController
 
     public function index()
     {
-        $role = session()->get('role');
-
-        if ($role === 'mahasiswa') {
-            return $this->mahasiswa();
-        }
-
-        return $this->dosen();
+        return session()->get('role') === 'mahasiswa'
+            ? $this->mahasiswa()
+            : $this->dosen();
     }
 
     // ── MAHASISWA ──────────────────────────────────────────
     private function mahasiswa()
     {
-        $id_user = session()->get('id_user');
-        $hari    = date('l'); // nama hari dalam bahasa Inggris
-        $hariMap = [
-            'Monday'    => 'Senin',
-            'Tuesday'   => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday'  => 'Kamis',
-            'Friday'    => 'Jumat',
-            'Saturday'  => 'Sabtu',
-            'Sunday'    => 'Minggu',
-        ];
-        $hariIni = $hariMap[$hari] ?? '';
+        $id_user    = session()->get('id_user');
+        $waktuSkrng = date('H:i:s');
 
-        // Ambil kelas yang tersedia hari ini
-        $kelasHariIni = $this->kelasModel
-                             ->where('hari', $hariIni)
-                             ->findAll();
+        // Ambil semua sesi hari ini dan mendatang
+        $sesiMendatang = $this->sesiModel->getSesiMendatang();
 
-        // Cek status presensi tiap kelas hari ini
+        // Cek status presensi tiap sesi
         $statusPresensi = [];
-        foreach ($kelasHariIni as $kelas) {
-            $statusPresensi[$kelas['id_kelas']] = $this->presensiModel->sudahPresensi(
+        foreach ($sesiMendatang as $sesi) {
+            $statusPresensi[$sesi['id_sesi']] = $this->presensiModel->sudahPresensi(
                 $id_user,
-                $kelas['id_kelas'],
-                date('Y-m-d')
+                $sesi['id_sesi']
             );
         }
 
-        $data = [
-            'kelasHariIni'   => $kelasHariIni,
+        return view('presensi/mahasiswa', [
+            'sesiMendatang'  => $sesiMendatang,
             'statusPresensi' => $statusPresensi,
+            'waktuSkrng'     => $waktuSkrng,
             'riwayat'        => $this->presensiModel->getRiwayatMahasiswa($id_user),
-            'hariIni'        => $hariIni,
-        ];
-
-        return view('presensi/mahasiswa', $data);
+        ]);
     }
 
-    // Proses klik tombol presensi oleh mahasiswa
+    // Proses klik tombol presensi
     public function store()
     {
         if (session()->get('role') !== 'mahasiswa') {
             return redirect()->to('/dashboard');
         }
 
-        $id_user  = session()->get('id_user');
-        $id_kelas = $this->request->getPost('id_kelas');
-        $status   = $this->request->getPost('status');
-        $tanggal  = date('Y-m-d');
+        $id_user = session()->get('id_user');
+        $id_sesi = $this->request->getPost('id_sesi');
+        $status  = $this->request->getPost('status');
 
-        // Cegah presensi duplikat
-        $sudah = $this->presensiModel->sudahPresensi($id_user, $id_kelas, $tanggal);
-        if ($sudah) {
-            return redirect()->to('/presensi')->with('error', 'Kamu sudah melakukan presensi untuk kelas ini hari ini!');
+        // Cek duplikat
+        if ($this->presensiModel->sudahPresensi($id_user, $id_sesi)) {
+            return redirect()->to('/presensi')->with('error', 'Kamu sudah presensi untuk sesi ini!');
+        }
+
+        // Cek jam — tombol hadir hanya bisa diklik saat jam mulai tiba
+        $sesi = $this->sesiModel->find($id_sesi);
+        if ($status === 'Hadir' && date('H:i:s') < $sesi['jam_mulai']) {
+            return redirect()->to('/presensi')->with('error', 'Presensi Hadir belum bisa dilakukan sebelum jam mulai!');
         }
 
         $this->presensiModel->insert([
             'id_user'     => $id_user,
-            'id_kelas'    => $id_kelas,
-            'tanggal'     => $tanggal,
+            'id_sesi'     => $id_sesi,
             'waktu_hadir' => date('H:i:s'),
             'status'      => $status,
             'created_at'  => date('Y-m-d H:i:s'),
@@ -103,40 +87,47 @@ class PresensiController extends BaseController
     private function dosen()
     {
         $id_dosen = session()->get('id_user');
-        $tanggal  = $this->request->getGet('tanggal') ?? date('Y-m-d');
-        $id_kelas = $this->request->getGet('id_kelas');
+        $id_sesi  = $this->request->getGet('id_sesi');
 
-        // Ambil kelas milik dosen ini
+        // Ambil semua kelas milik dosen
         $kelasDosen = $this->kelasModel
                            ->where('id_dosen', $id_dosen)
                            ->findAll();
 
-        $presensiList = [];
-        if ($id_kelas) {
-            $presensiList = $this->presensiModel->getPresensiByKelas($id_kelas, $tanggal);
+        // Ambil sesi dari kelas-kelas dosen
+        $sesiList = [];
+        foreach ($kelasDosen as $k) {
+            $sesiKelas = $this->sesiModel->getSesiByKelas($k['id_kelas']);
+            foreach ($sesiKelas as $s) {
+                $s['nama_kelas'] = $k['nama_kelas'];
+                $sesiList[]      = $s;
+            }
         }
 
-        $data = [
-            'kelasDosen'   => $kelasDosen,
-            'presensiList' => $presensiList,
-            'tanggal'      => $tanggal,
-            'id_kelas'     => $id_kelas,
-        ];
+        // Sort by tanggal
+        usort($sesiList, fn($a, $b) => strtotime($b['tanggal']) - strtotime($a['tanggal']));
 
-        return view('presensi/dosen', $data);
+        $presensiList = [];
+        if ($id_sesi) {
+            $presensiList = $this->presensiModel->getPresensiBySesi($id_sesi);
+        }
+
+        return view('presensi/dosen', [
+            'sesiList'     => $sesiList,
+            'presensiList' => $presensiList,
+            'id_sesi'      => $id_sesi,
+        ]);
     }
 
-    // Koreksi status presensi oleh dosen
+    // Koreksi status presensi
     public function koreksi(int $id)
     {
         if (!in_array(session()->get('role'), ['dosen', 'admin'])) {
             return redirect()->to('/dashboard');
         }
 
-        $status = $this->request->getPost('status');
-
         $this->presensiModel->update($id, [
-            'status' => $status,
+            'status' => $this->request->getPost('status'),
         ]);
 
         return redirect()->back()->with('success', 'Status presensi berhasil dikoreksi!');

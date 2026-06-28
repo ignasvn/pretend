@@ -6,7 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class CreateTabelPresensi extends Migration
 {
-    public function up()
+   public function up()
     {
         $this->forge->addField([
             'id_presensi' => [
@@ -21,9 +21,6 @@ class CreateTabelPresensi extends Migration
             'id_kelas' => [
                 'type'     => 'INT',
                 'unsigned' => true,
-            ],
-            'tanggal' => [
-                'type' => 'DATE',
             ],
             'waktu_hadir' => [
                 'type' => 'TIME',

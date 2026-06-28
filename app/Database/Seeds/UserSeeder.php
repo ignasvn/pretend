@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'username'   => 'dosen01',
+                'username'   => 'dosen',
                 'email'      => 'dosen@pretend.com',
                 'password'   => password_hash('dosen123', PASSWORD_BCRYPT),
                 'nama'       => 'Dosen Pertama',
@@ -26,9 +26,9 @@ class UserSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'username'   => 'mhs001',
+                'username'   => 'mahasiswa',
                 'email'      => 'mahasiswa@pretend.com',
-                'password'   => password_hash('mhs123', PASSWORD_BCRYPT),
+                'password'   => password_hash('mahasiswa123', PASSWORD_BCRYPT),
                 'nama'       => 'Mahasiswa Pertama',
                 'role'       => 'mahasiswa',
                 'created_at' => date('Y-m-d H:i:s'),

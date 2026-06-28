@@ -10,7 +10,7 @@ class KelasModel extends Model
     protected $primaryKey = 'id_kelas';
 
     protected $allowedFields = [
-        'nama_kelas', 'id_dosen', 'hari', 'jam_mulai', 'jam_selesai', 'created_at'
+        'nama_kelas', 'id_dosen', 'tanggal', 'jam_mulai', 'jam_selesai', 'created_at'
     ];
 
     // Ambil semua kelas beserta nama dosennya (JOIN)

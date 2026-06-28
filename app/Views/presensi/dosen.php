@@ -14,28 +14,34 @@
 <!-- Filter -->
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-6">
     <form action="/presensi" method="GET" class="flex flex-wrap gap-4 items-end">
+
         <div>
-            <label class="block text-sm font-semibold mb-1">Pilih Kelas</label>
-            <select name="id_kelas"
+            <label class="block text-sm font-semibold mb-1">Pilih Sesi</label>
+            <select name="id_sesi"
                     class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
-                <option value="">-- Pilih Kelas --</option>
-                <?php foreach ($kelasDosen as $k): ?>
-                    <option value="<?= $k['id_kelas'] ?>"
-                        <?= $id_kelas == $k['id_kelas'] ? 'selected' : '' ?>>
-                        <?= esc($k['nama_kelas']) ?>
+                <option value="">-- Pilih Sesi --</option>
+                <?php
+                $hariMap = [
+                    'Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu',
+                    'Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu','Sunday'=>'Minggu'
+                ];
+                ?>
+                <?php foreach ($sesiList as $s): ?>
+                    <?php $hari = $hariMap[date('l', strtotime($s['tanggal']))] ?? ''; ?>
+                    <option value="<?= $s['id_sesi'] ?>"
+                        <?= $id_sesi == $s['id_sesi'] ? 'selected' : '' ?>>
+                        <?= esc($s['nama_kelas']) ?> — <?= $hari ?>, <?= date('d M Y', strtotime($s['tanggal'])) ?>
+                        (<?= substr($s['jam_mulai'],0,5) ?>)
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
-        <div>
-            <label class="block text-sm font-semibold mb-1">Tanggal</label>
-            <input type="date" name="tanggal" value="<?= $tanggal ?>"
-                   class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
-        </div>
+
         <button type="submit"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-6 py-2 rounded-lg transition">
             Tampilkan
         </button>
+
     </form>
 </div>
 
@@ -56,7 +62,7 @@
             <?php if (empty($presensiList)): ?>
                 <tr>
                     <td colspan="6" class="text-center py-6 text-gray-400">
-                        <?= $id_kelas ? 'Belum ada data presensi untuk filter ini.' : 'Pilih kelas dan tanggal untuk melihat data.' ?>
+                        <?= $id_sesi ? 'Belum ada data presensi untuk sesi ini.' : 'Pilih sesi untuk melihat data.' ?>
                     </td>
                 </tr>
             <?php else: ?>

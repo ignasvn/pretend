@@ -46,7 +46,7 @@
                 <select name="hari"
                         class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
                     <option value="">-- Pilih Hari --</option>
-                    <?php foreach (['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'] as $h): ?>
+                    <?php foreach (['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'] as $h): ?>
                         <option value="<?= $h ?>" <?= old('hari') === $h ? 'selected' : '' ?>>
                             <?= $h ?>
                         </option>

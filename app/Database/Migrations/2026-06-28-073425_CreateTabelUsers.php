@@ -4,9 +4,9 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class TabelUsers extends Migration
+class CreateTabelUsers extends Migration
 {
-    public function up()
+public function up()
     {
         // 1. Definisikan semua kolom dan tipe datanya
         $this->forge->addField([
@@ -48,7 +48,7 @@ class TabelUsers extends Migration
         $this->forge->addKey('id_user', true);
 
         // 3. Buat nama tabelnya: 'tabel_users'
-        $this->forge->createTable('tabel_users');
+        $this->forge->createTable('tabel_users', true);
     }
 
     public function down()
