@@ -40,6 +40,7 @@ class PresensiController extends BaseController
             'Thursday'  => 'Kamis',
             'Friday'    => 'Jumat',
             'Saturday'  => 'Sabtu',
+            'Sunday'    => 'Minggu',
         ];
         $hariIni = $hariMap[$hari] ?? '';
 

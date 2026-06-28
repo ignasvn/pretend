@@ -24,7 +24,7 @@ class CreateTabelKelas extends Migration
             ],
             'hari' => [
                 'type'       => 'ENUM',
-                'constraint' => ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],
+                'constraint' => ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu', 'Minggu'],
             ],
             'jam_mulai' => [
                 'type' => 'TIME',

@@ -34,3 +34,7 @@ $routes->get('/jadwal/delete/(:num)', 'JadwalController::delete/$1', ['filter' =
 $routes->get('/presensi', 'PresensiController::index', ['filter' => 'auth']);
 $routes->post('/presensi/store', 'PresensiController::store', ['filter' => 'auth']);
 $routes->post('/presensi/koreksi/(:num)', 'PresensiController::koreksi/$1', ['filter' => 'auth']);
+
+// Laporan
+$routes->get('/laporan', 'LaporanController::index', ['filter' => 'auth']);
+$routes->get('/laporan/export-csv', 'LaporanController::exportCsv', ['filter' => 'auth']);
