@@ -23,6 +23,15 @@ class UserModel extends Model
                     ->first(); // ambil 1 baris saja
     }
 
+    // Ambil semua user, bisa filter by role
+    public function getAllUsers(string $role = null)
+    {
+        if ($role) {
+            return $this->where('role', $role)->findAll();
+        }
+        return $this->findAll();
+    }
+
     // protected bool $allowEmptyInserts = false;
     // protected bool $updateOnlyChanged = true;
 
