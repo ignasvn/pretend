@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" x-data="{ 
+    sidebarOpen: true,
     dark: localStorage.getItem('theme') === 'dark',
     init() {
         this.$watch('dark', val => localStorage.setItem('theme', val ? 'dark' : 'light'))
@@ -103,7 +104,7 @@
 
         <!-- Versi Aplikasi -->
         <div class="px-4 py-3 border-t border-indigo-700">
-            <span x-show="sidebarOpen" class="text-xs text-indigo-300">version 1.0.0</span>
+            <span x-show="sidebarOpen" class="text-xs text-indigo-300">Version 1.0.0</span>
             <span x-show="!sidebarOpen" class="text-xs text-indigo-300">v1</span>
         </div>
     </aside>
@@ -139,7 +140,7 @@
 
                     <button @click="dark = !dark"
                             class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                        🌙 Tema Gelap/Terang
+                        🌙 Tema
                     </button>
 
                     <hr class="my-1 border-gray-200 dark:border-gray-600">
