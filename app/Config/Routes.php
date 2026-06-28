@@ -21,3 +21,11 @@ $routes->post('/users/create', 'UserController::store', ['filter' => 'auth']);
 $routes->get('/users/edit/(:num)', 'UserController::edit/$1', ['filter' => 'auth']);
 $routes->post('/users/edit/(:num)', 'UserController::update/$1', ['filter' => 'auth']);
 $routes->get('/users/delete/(:num)', 'UserController::delete/$1', ['filter' => 'auth']);
+
+// Jadwal / Kelas
+$routes->get('/jadwal', 'JadwalController::index', ['filter' => 'auth']);
+$routes->get('/jadwal/create', 'JadwalController::create', ['filter' => 'auth']);
+$routes->post('/jadwal/create', 'JadwalController::store', ['filter' => 'auth']);
+$routes->get('/jadwal/edit/(:num)', 'JadwalController::edit/$1', ['filter' => 'auth']);
+$routes->post('/jadwal/edit/(:num)', 'JadwalController::update/$1', ['filter' => 'auth']);
+$routes->get('/jadwal/delete/(:num)', 'JadwalController::delete/$1', ['filter' => 'auth']);
